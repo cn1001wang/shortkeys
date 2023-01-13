@@ -172,6 +172,22 @@ let handleAction = (action, request = {}) => {
         browser.tabs.remove(ids)
       })
     })
+  } else if (action === 'closelefttab' || action === 'closerighttab') {
+    browser.tabs.query({currentWindow: true, active: true}).then(function(tabs) {
+      let currentTabIndex = tabs[0].index
+      browser.tabs.query({currentWindow: true, pinned: false, active: false}).then(function(tabs) {
+        let ids = []
+        tabs.forEach(function (tab) {
+          if ((action === 'closelefttab' && tab.index+1 == currentTabIndex) ||
+              (action === 'closerighttab' && tab.index-1 == currentTabIndex)) {
+            ids.push(tab.id)
+          }
+          // console.log(tab.index+1,currentTabIndex)
+        })
+        console.log(ids)
+        browser.tabs.remove(ids)
+      })
+    })
   } else if (action === 'togglepin') {
     browser.tabs.query({active: true, currentWindow: true}).then(function(tab) {
       let toggle = !tab[0].pinned
@@ -302,13 +318,13 @@ let handleAction = (action, request = {}) => {
   } else if (action === 'bottom') {
     browser.tabs.executeScript(null, {'code': 'window.scrollTo({left: 0, top: document.body.scrollHeight, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'scrollup') {
-    browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: -50, behavior: "' + smoothScrolling + '"})'})
+    browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: -150, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'scrollupmore') {
     browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: -500, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'pageup') {
     browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: -window.innerHeight, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'scrolldown') {
-    browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: 50, behavior: "' + smoothScrolling + '"})'})
+    browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: 150, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'scrolldownmore') {
     browser.tabs.executeScript(null, {'code': 'window.scrollBy({left: 0, top: 500, behavior: "' + smoothScrolling + '"})'})
   } else if (action === 'pagedown') {
